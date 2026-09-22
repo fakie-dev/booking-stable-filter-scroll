@@ -1,9 +1,10 @@
 // ==UserScript==
 // @name         Booking.com Stable Filter Scroll
+// @name:ru      Booking.com — стабильный скролл фильтров
 // @namespace    https://github.com/fakie-dev/booking-stable-filter-scroll
-// @version      1.1.1
-// @description  Keeps the Booking.com filter sidebar from jumping when filters update or reorder.
-// @description:ru Удерживает список фильтров Booking.com на месте во время обновления и перестановки фильтров.
+// @version      1.1.2
+// @description  Keeps the Booking.com filter sidebar from jumping when filters update or move.
+// @description:ru Не даёт странице Booking.com прыгать при обновлении и перемещении фильтров.
 // @author       fakie-dev
 // @license      MIT
 // @match        https://www.booking.com/searchresults*
