@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0] - 2026-09-22
+
+- Added project icon metadata for userscript managers.
+- Added Greasy Fork installation and live install/version badges.
+- Added synced Greasy Fork descriptions in English and Russian.
+- Added repository social preview artwork.
+
 ## 1.0.0 — 2026-09-22
 
 First public release.
