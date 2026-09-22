@@ -1,0 +1,57 @@
+name: Bug report
+description: Something jumps, drifts, or stops working
+title: "[Bug] "
+labels: [bug]
+body:
+  - type: input
+    id: browser
+    attributes:
+      label: Browser
+      placeholder: Chrome 153.0.x
+    validations:
+      required: true
+
+  - type: input
+    id: manager
+    attributes:
+      label: Userscript manager
+      placeholder: Tampermonkey 5.x
+    validations:
+      required: true
+
+  - type: input
+    id: script-version
+    attributes:
+      label: Script version
+      placeholder: 1.0.0
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: What happened?
+      description: The shortest sequence that reproduces it is best.
+      placeholder: |
+        1. Open search results
+        2. Scroll to ...
+        3. Select ...
+        4. The page ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: recording
+    attributes:
+      label: Screen recording or screenshot
+      description: Optional, but very useful for scroll/layout bugs. Please remove personal data first.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I tested the latest script version.
+          required: true
+        - label: I removed personal information from screenshots, recordings, and URLs.
+          required: true
