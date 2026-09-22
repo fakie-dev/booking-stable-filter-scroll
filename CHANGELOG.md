@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.1] - 2026-09-22
+
+- Fixed scroll jumps when Booking promotes a selected filter into **Popular filters**.
+- Anchor matching now distinguishes duplicate filter rows by their previous document position.
+- Added outlier-resistant anchor compensation and a longer settle window for delayed reordering.
+- Fixed rapid consecutive filter clicks so the newest restore state is not discarded.
+- Replaced the project artwork and added a transparent PNG icon set.
+
 ## [1.1.0] - 2026-09-22
 
 - Added project icon metadata for userscript managers.

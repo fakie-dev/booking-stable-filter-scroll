@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Booking.com Stable Filter Scroll
 // @namespace    https://github.com/fakie-dev/booking-stable-filter-scroll
-// @version      1.1.0
+// @version      1.1.1
 // @description  Keeps the Booking.com filter sidebar from jumping when filters update or reorder.
 // @description:ru Удерживает список фильтров Booking.com на месте во время обновления и перестановки фильтров.
 // @author       fakie-dev
@@ -22,9 +22,10 @@
 (() => {
     'use strict';
 
-    const STORAGE_KEY = '__booking_stable_filter_scroll_v1';
-    const MAX_LOCK_TIME_MS = 2500;
-    const QUIET_TIME_MS = 350;
+    const STORAGE_KEY = '__booking_stable_filter_scroll_v2';
+    const MIN_LOCK_TIME_MS = 1200;
+    const MAX_LOCK_TIME_MS = 3500;
+    const QUIET_TIME_MS = 500;
     const RESTORE_MAX_AGE_MS = 10_000;
     const REVEAL_TIMEOUT_MS = 800;
     const MAX_ANCHORS = 6;
@@ -82,12 +83,17 @@
         return element?.getAttribute?.('data-filters-item') || null;
     }
 
-    function findBestFilterMatch(key, expectedTop) {
+    function getDocumentTop(element) {
+        return element.getBoundingClientRect().top + window.scrollY;
+    }
+
+    function findBestFilterMatch(key, expectedDocumentTop) {
         if (!key) {
             return null;
         }
 
-        const matches = [];
+        let best = null;
+        let bestDistance = Infinity;
 
         for (const element of document.querySelectorAll('[data-filters-item]')) {
             if (getFilterKey(element) !== key) {
@@ -95,25 +101,28 @@
             }
 
             const rect = element.getBoundingClientRect();
-
             if (rect.width <= 0 || rect.height <= 0) {
                 continue;
             }
 
-            matches.push({
-                element,
-                top: rect.top,
-                distance: Math.abs(rect.top - expectedTop),
-            });
+            // The same filter can appear twice after Booking promotes a selected
+            // item to "Popular filters". Match the copy closest to its old
+            // document position instead of whichever copy happens to be first.
+            const distance = Math.abs(getDocumentTop(element) - expectedDocumentTop);
+
+            if (distance < bestDistance) {
+                best = element;
+                bestDistance = distance;
+            }
         }
 
-        matches.sort((a, b) => a.distance - b.distance);
-
-        return matches[0]?.element ?? null;
+        return best;
     }
 
     function collectAnchors(clickedFilter) {
-        const viewportMiddle = window.innerHeight / 2;
+        const clickedRect = clickedFilter.getBoundingClientRect();
+        const clickedCenter = (clickedRect.top + clickedRect.bottom) / 2;
+        const clickedDocumentTop = getDocumentTop(clickedFilter);
         const candidates = [];
 
         for (const element of document.querySelectorAll('[data-filters-item]')) {
@@ -128,15 +137,21 @@
 
             const rect = element.getBoundingClientRect();
             const center = (rect.top + rect.bottom) / 2;
+            const documentTop = getDocumentTop(element);
+
+            // Prefer rows around the one being clicked. Rows just above it tend
+            // to survive Booking's reordering more reliably than promoted rows.
+            const aboveBias = documentTop < clickedDocumentTop ? -30 : 0;
 
             candidates.push({
                 key,
                 top: rect.top,
-                distance: Math.abs(center - viewportMiddle),
+                documentTop,
+                score: Math.abs(center - clickedCenter) + aboveBias,
             });
         }
 
-        candidates.sort((a, b) => a.distance - b.distance);
+        candidates.sort((a, b) => a.score - b.score);
 
         const anchors = [];
         const seen = new Set();
@@ -147,7 +162,11 @@
             }
 
             seen.add(candidate.key);
-            anchors.push({ key: candidate.key, top: candidate.top });
+            anchors.push({
+                key: candidate.key,
+                top: candidate.top,
+                documentTop: candidate.documentTop,
+            });
 
             if (anchors.length >= MAX_ANCHORS) {
                 break;
@@ -165,7 +184,7 @@
         const deltas = [];
 
         for (const anchor of active.anchors) {
-            const element = findBestFilterMatch(anchor.key, anchor.top);
+            const element = findBestFilterMatch(anchor.key, anchor.documentTop);
             if (!element) {
                 continue;
             }
@@ -174,7 +193,19 @@
             deltas.push(currentTop - anchor.top);
         }
 
-        return median(deltas);
+        if (deltas.length === 0) {
+            return null;
+        }
+
+        // A promoted/duplicated row can still be a bad match. Use a robust
+        // median and discard large outliers before applying the correction.
+        const center = median(deltas);
+        const deviations = deltas.map((delta) => Math.abs(delta - center));
+        const mad = median(deviations) ?? 0;
+        const threshold = Math.max(24, mad * 3.5);
+        const inliers = deltas.filter((delta) => Math.abs(delta - center) <= threshold);
+
+        return median(inliers.length > 0 ? inliers : deltas);
     }
 
     function revealDocument() {
@@ -259,7 +290,7 @@
         const quietFor = now - active.lastMutation;
 
         if (
-            (elapsed > 450 && quietFor > QUIET_TIME_MS) ||
+            (elapsed > MIN_LOCK_TIME_MS && quietFor > QUIET_TIME_MS) ||
             elapsed > MAX_LOCK_TIME_MS
         ) {
             stopStabilizing();
@@ -371,6 +402,10 @@
             const filter = event.target.closest('[data-filters-item]');
             if (!filter) {
                 return;
+            }
+
+            if (active) {
+                stopStabilizing();
             }
 
             const data = {

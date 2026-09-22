@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/icon.svg" width="88" alt="Booking.com Stable Filter Scroll icon">
+<img src="assets/icon-128.png" width="88" alt="Booking.com Stable Filter Scroll icon">
 
 # Booking.com Stable Filter Scroll
 
@@ -20,8 +20,10 @@ Keeps the Booking.com filter sidebar from jumping around while filters update.
 </div>
 
 <p align="center">
-  <img src="assets/social-preview.png" alt="Booking.com Stable Filter Scroll preview" width="100%">
+  <img src="assets/readme-banner.png" alt="Booking.com Stable Filter Scroll preview" width="100%">
 </p>
+
+> Unofficial userscript. Not affiliated with or endorsed by Booking.com.
 
 ---
 
@@ -43,7 +45,7 @@ You can also install directly from GitHub:
 
 The jump is not always a simple `scrollTo(0, 0)`. Booking can reorder selected filters, insert or remove rows, or rebuild part of the sidebar. That changes the layout around the viewport and makes the page appear to move.
 
-The script remembers a few visible filter rows, ignores the one you just clicked, and compensates for the movement of the remaining rows while Booking is updating.
+The script remembers a few visible filter rows, ignores the one you just clicked, and compensates for the movement of the remaining rows while Booking is updating. If Booking promotes the selected item into **Popular filters**, duplicate filter rows are matched by their previous document position instead of blindly using the first copy in the DOM.
 
 ## How it works
 
