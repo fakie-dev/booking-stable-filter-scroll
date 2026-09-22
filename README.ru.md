@@ -19,6 +19,10 @@
 
 </div>
 
+<p align="center">
+  <img src="assets/social-preview.png" alt="Превью Booking.com Stable Filter Scroll" width="100%">
+</p>
+
 ---
 
 Я сделал этот скрипт после того, как надоело ловить глазами фильтры Booking после каждого клика. Выбираешь пункт, Booking перестраивает список — и место, на которое ты смотрел, уезжает.

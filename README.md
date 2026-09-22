@@ -19,6 +19,10 @@ Keeps the Booking.com filter sidebar from jumping around while filters update.
 
 </div>
 
+<p align="center">
+  <img src="assets/social-preview.png" alt="Booking.com Stable Filter Scroll preview" width="100%">
+</p>
+
 ---
 
 I made this after getting tired of Booking.com's filter list shifting under the cursor. Select a filter, Booking updates or reorders the list, and the part you were looking at moves.
