@@ -3,3 +3,10 @@ Thumbs.db
 *.log
 .idea/
 .vscode/
+node_modules/
+dist/
+.codex/
+.agents/
+AGENTS.md
+AGENTS.local.md
+*.local.*

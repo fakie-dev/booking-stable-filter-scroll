@@ -1,4 +1,5 @@
-import fs from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
+import { execSync } from 'node:child_process';
 import process from 'node:process';
 
 const version = process.argv[2];
@@ -8,19 +9,15 @@ if (!version || !/^\d+\.\d+\.\d+$/.test(version)) {
     process.exit(1);
 }
 
-for (const file of [
-    'booking-stable-filter-scroll.user.js',
-    'booking-stable-filter-scroll.meta.js',
-]) {
-    const source = fs.readFileSync(file, 'utf8');
-    const pattern = /(^\/\/\s+@version\s+)(\S+)/m;
+for (const file of ['package.json', 'package-lock.json']) {
+    const data = JSON.parse(readFileSync(file, 'utf8'));
+    data.version = version;
 
-    if (!pattern.test(source)) {
-        throw new Error(`${file}: @version not found`);
+    if (file === 'package-lock.json') {
+        data.packages[''].version = version;
     }
 
-    const updated = source.replace(pattern, `$1${version}`);
-    fs.writeFileSync(file, updated);
+    writeFileSync(file, `${JSON.stringify(data, null, 2)}\n`);
 }
 
-console.log(`Updated userscript version to ${version}`);
+execSync('npm run build', { stdio: 'inherit' });

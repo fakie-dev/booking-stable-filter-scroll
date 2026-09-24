@@ -63,7 +63,7 @@
 
 При полной навигации данные для восстановления ненадолго сохраняются в `sessionStorage`, после чего удаляются.
 
-Никакого отдельного UI и никаких зависимостей.
+Готовый скрипт собирается из модулей; отдельного UI и зависимостей во время работы у него нет.
 
 </details>
 
@@ -97,20 +97,17 @@ Booking регулярно меняет фронтенд и проводит A/B
 
 ## Разработка
 
-Зависимостей нет.
+Понадобятся Node.js 26 и npm. Файлы в корне — готовые артефакты установки; исходный код находится в `src/`.
 
 ```bash
-git clone https://github.com/fakie-dev/booking-stable-filter-scroll.git
-cd booking-stable-filter-scroll
-node --check booking-stable-filter-scroll.user.js
-node scripts/validate.mjs
+npm ci
+npm run build
+npm run check
+npm test
+npm run test:browser
 ```
 
-Поднять версию сразу в обоих metadata-файлах:
-
-```bash
-node scripts/set-version.mjs 1.1.1
-```
+`npm run dev` запускает локальный сервер для отладки userscript. `npm run test:browser` проверяет собранный скрипт на тестовой странице в установленном Chrome или Chromium. Подробности есть в [руководстве по разработке](docs/development.md), [описании архитектуры](docs/architecture.md), [плане развития](docs/roadmap.md) и [правилах участия](CONTRIBUTING.md).
 
 ## Лицензия
 

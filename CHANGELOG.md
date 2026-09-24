@@ -1,5 +1,21 @@
 # Changelog
 
+## Unreleased
+
+## [1.1.3] - 2026-09-25
+
+- Prevented upward jumps caused by stale in-page position fallback, a final correction after manual scrolling, and competing `scrollBy` calls.
+- Reduced active DOM work to one filter scan per correction and disconnected the observer while idle.
+- Added lifecycle regression tests and a headless-browser smoke check of the built script.
+- Added a reproducible Node.js and Vite userscript build with local browser development.
+- Split source code from the committed install artifacts and added behavioral tests.
+- Documented the architecture, development workflow, and future extension path.
+- Documented explicit quality gates.
+
+## [1.1.2] - 2026-09-22
+
+- Added Russian locale metadata to the userscript header.
+
 ## [1.1.1] - 2026-09-22
 
 - Fixed scroll jumps when Booking promotes a selected filter into **Popular filters**.

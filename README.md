@@ -9,8 +9,8 @@ Keeps the Booking.com filter sidebar from jumping around while filters update.
 [![Install on Greasy Fork](https://img.shields.io/badge/Install-Greasy%20Fork-670000?style=for-the-badge&logo=greasyfork&logoColor=white)](https://greasyfork.org/en/scripts/596873-booking-com-stable-filter-scroll)
 [![Direct install](https://img.shields.io/badge/Direct%20install-userscript-006CE4?style=for-the-badge&logo=tampermonkey&logoColor=white)](https://raw.githubusercontent.com/fakie-dev/booking-stable-filter-scroll/main/booking-stable-filter-scroll.user.js)
 
-[![Greasy Fork version](https://img.shields.io/greasyfork/v/596873?label=version)](https://greasyfork.org/en/scripts/596873-booking-com-stable-filter-scroll)
-[![Greasy Fork installs](https://img.shields.io/greasyfork/dt/596873?label=installs)](https://greasyfork.org/en/scripts/596873-booking-com-stable-filter-scroll)
+[![Version](https://img.shields.io/github/v/tag/fakie-dev/booking-stable-filter-scroll?label=version&sort=semver)](https://github.com/fakie-dev/booking-stable-filter-scroll/tags)
+[![Greasy Fork](https://img.shields.io/badge/Greasy%20Fork-install-670000?logo=greasyfork&logoColor=white)](https://greasyfork.org/en/scripts/596873-booking-com-stable-filter-scroll)
 [![Validation](https://github.com/fakie-dev/booking-stable-filter-scroll/actions/workflows/validate.yml/badge.svg?branch=main)](https://github.com/fakie-dev/booking-stable-filter-scroll/actions/workflows/validate.yml)
 [![License](https://img.shields.io/github/license/fakie-dev/booking-stable-filter-scroll)](LICENSE)
 [![Stars](https://img.shields.io/github/stars/fakie-dev/booking-stable-filter-scroll?style=flat&logo=github)](https://github.com/fakie-dev/booking-stable-filter-scroll/stargazers)
@@ -63,7 +63,7 @@ When a filter is pressed, the script:
 
 For a full navigation, the same anchor data is kept briefly in `sessionStorage` and discarded after the restore window.
 
-There is no build step and no injected UI.
+The distributed file is built from modular source. It has no injected UI.
 
 </details>
 
@@ -99,22 +99,17 @@ Booking changes its frontend frequently, including A/B-tested layouts. If the sc
 
 ## Development
 
-No dependencies are required.
+Use Node.js 26 and npm. The files in the repository root are generated install artifacts; edit `src/`.
 
 ```bash
-git clone https://github.com/fakie-dev/booking-stable-filter-scroll.git
-cd booking-stable-filter-scroll
-node --check booking-stable-filter-scroll.user.js
-node scripts/validate.mjs
+npm ci
+npm run build
+npm run check
+npm test
+npm run test:browser
 ```
 
-Bump both metadata files at once:
-
-```bash
-node scripts/set-version.mjs 1.1.1
-```
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the project rules.
+`npm run dev` starts the local userscript development server. `npm run test:browser` needs local Chrome or Chromium and checks the built script in a synthetic page. See the [development guide](docs/development.md) for browser debugging and releases, the [architecture](docs/architecture.md) for the code layout, the [quality gates](docs/quality.md) for what is and is not verified, the [roadmap](docs/roadmap.md) for technical choices, and [CONTRIBUTING.md](CONTRIBUTING.md) for contribution rules.
 
 ## License
 

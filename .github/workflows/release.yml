@@ -10,6 +10,7 @@ permissions:
 
 jobs:
   release:
+    if: github.repository == 'fakie-dev/booking-stable-filter-scroll'
     runs-on: ubuntu-latest
 
     steps:
@@ -19,12 +20,16 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: 24
+          node-version: 26
+          cache: npm
 
-      - name: Validate source
+      - name: Build and validate
         run: |
-          node --check booking-stable-filter-scroll.user.js
-          node scripts/validate.mjs
+          npm ci
+          npm run build
+          npm run check
+          npm test
+          git diff --exit-code -- booking-stable-filter-scroll.user.js booking-stable-filter-scroll.meta.js
 
       - name: Verify tag matches userscript version
         shell: bash

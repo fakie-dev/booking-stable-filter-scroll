@@ -1,5 +1,4 @@
 import fs from 'node:fs';
-import process from 'node:process';
 
 const userFile = 'booking-stable-filter-scroll.user.js';
 const metaFile = 'booking-stable-filter-scroll.meta.js';
@@ -27,8 +26,13 @@ function field(block, name, file) {
 const userMeta = metadataBlock(user, userFile);
 const metaMeta = metadataBlock(meta, metaFile);
 
+if (userMeta !== metaMeta) {
+    throw new Error('Userscript and metadata headers differ');
+}
+
 const fields = [
     'name',
+    'name:ru',
     'namespace',
     'version',
     'description',
@@ -58,6 +62,11 @@ if (!/^\d+\.\d+\.\d+$/.test(version)) {
     throw new Error(`@version must use x.y.z semantic versioning, got ${version}`);
 }
 
+const packageVersion = JSON.parse(fs.readFileSync('package.json', 'utf8')).version;
+if (version !== packageVersion) {
+    throw new Error(`Package version ${packageVersion} differs from userscript version ${version}`);
+}
+
 const requiredMatches = [
     'https://www.booking.com/searchresults*',
     'https://booking.com/searchresults*',
@@ -67,6 +76,10 @@ for (const pattern of requiredMatches) {
     if (!userMeta.includes(`@match        ${pattern}`) || !metaMeta.includes(`@match        ${pattern}`)) {
         throw new Error(`Missing required @match ${pattern}`);
     }
+}
+
+if (!userMeta.includes('@noframes')) {
+    throw new Error('Missing @noframes');
 }
 
 for (const forbidden of ['@require', '@connect']) {
